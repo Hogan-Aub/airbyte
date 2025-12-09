@@ -250,7 +250,17 @@ class MSSQLQueryBuilder(
         GET_EXISTING_SCHEMA_QUERY.executeQuery(connection, outputSchema, tableName) { rs ->
             while (rs.next()) {
                 val name = rs.getString("COLUMN_NAME")
-                val type = MssqlType.valueOf(rs.getString("DATA_TYPE").uppercase())
+                val dataTypeString = rs.getString("DATA_TYPE").uppercase()
+                val type = try {
+                    MssqlType.valueOf(dataTypeString)
+                } catch (e: IllegalArgumentException) {
+                    // Fallback mapping for types not directly in the enum
+                    when (dataTypeString) {
+                        "INT" -> MssqlType.INT
+                        "INT IDENTITY" -> MssqlType.INT
+                        else -> MssqlType.TEXT // Default fallback
+                    }
+                }
                 fields.add(NamedSqlField(name, type))
             }
         }

@@ -28,6 +28,7 @@ enum class MssqlType(val sqlType: Int, val sqlStringOverride: String? = null) {
     TEXT(Types.LONGVARCHAR),
     BIT(Types.BOOLEAN),
     DATE(Types.DATE),
+    INT(Types.INTEGER),
     BIGINT(Types.BIGINT),
     /**
      * if you change the numeric precision/scale, remember to also update [LIMITS.MAX_NUMERIC] /
@@ -51,7 +52,7 @@ class AirbyteTypeToMssqlType {
             is ArrayTypeWithoutSchema -> MssqlType.TEXT
             is BooleanType -> MssqlType.BIT
             is DateType -> MssqlType.DATE
-            is IntegerType -> MssqlType.BIGINT
+            is IntegerType -> MssqlType.INT
             is NumberType -> MssqlType.DECIMAL
             is ObjectTypeWithEmptySchema -> MssqlType.TEXT
             is ObjectTypeWithoutSchema -> MssqlType.TEXT
